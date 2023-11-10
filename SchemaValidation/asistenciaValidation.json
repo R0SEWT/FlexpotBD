@@ -1,0 +1,27 @@
+{
+    "validator": {
+       "$jsonSchema": {
+          "bsonType": "object",
+          "required": ["idAsistencia", "idUsuario", "fechaRegistro", "estado"],
+          "properties": {
+             "idAsistencia": {
+                "bsonType": "int",
+                "description": "Identificador de la asistencia, campo requerido."
+             },
+             "idUsuario": {
+                "bsonType": "int",
+                "description": "Identificador del usuario, campo requerido."
+             },
+             "fechaRegistro": {
+                "bsonType": "date",
+                "description": "Fecha de registro de la asistencia."
+             },
+             "estado": {
+                "bsonType": "string",
+                "description": "Estado de la asistencia."
+             }
+          }
+       }
+    }
+ }
+ 

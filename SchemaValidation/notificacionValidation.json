@@ -1,0 +1,27 @@
+{
+    "validator": {
+       "$jsonSchema": {
+          "bsonType": "object",
+          "required": ["idNotificacion", "mensaje", "fechaEnvio", "leido"],
+          "properties": {
+             "idNotificacion": {
+                "bsonType": "int",
+                "description": "Identificador de la notificación, campo requerido."
+             },
+             "mensaje": {
+                "bsonType": "string",
+                "description": "Mensaje de la notificación."
+             },
+             "fechaEnvio": {
+                "bsonType": "date",
+                "description": "Fecha de envío de la notificación."
+             },
+             "leido": {
+                "bsonType": "bool",
+                "description": "Indica si la notificación ha sido leída."
+             }
+          }
+       }
+    }
+ }
+ 

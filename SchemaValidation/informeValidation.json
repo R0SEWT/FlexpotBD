@@ -1,0 +1,31 @@
+{
+    "validator": {
+       "$jsonSchema": {
+          "bsonType": "object",
+          "required": ["idInforme", "titulo", "fechaCreacion", "contenido", "idUsuario"],
+          "properties": {
+             "idInforme": {
+                "bsonType": "int",
+                "description": "Identificador del informe, campo requerido."
+             },
+             "titulo": {
+                "bsonType": "string",
+                "description": "Título del informe."
+             },
+             "fechaCreacion": {
+                "bsonType": "date",
+                "description": "Fecha de creación del informe."
+             },
+             "contenido": {
+                "bsonType": "string",
+                "description": "Contenido del informe."
+             },
+             "idUsuario": {
+                "bsonType": "int",
+                "description": "Identificador del usuario asociado al informe."
+             }
+          }
+       }
+    }
+ }
+ 

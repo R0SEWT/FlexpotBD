@@ -1,0 +1,38 @@
+{
+    "validator": {
+       "$jsonSchema": {
+          "bsonType": "object",
+          "required": ["idReunion", "idSala", "idUsuario", "fechaReunion", "duracionReunion", "presencial"],
+          "properties": {
+             "idReunion": {
+                "bsonType": "int",
+                "description": "Identificador de la reunión, campo requerido."
+             },
+             "idSala": {
+                "bsonType": "int",
+                "description": "Identificador de la sala asociada a la reunión."
+             },
+             "idUsuario": {
+                "bsonType": "int",
+                "description": "Identificador del usuario asociado a la reunión."
+             },
+             "fechaReunion": {
+                "bsonType": "date",
+                "description": "Fecha de la reunión."
+             },
+             "duracionReunion": {
+                "bsonType": "int",
+                "description": "Duración de la reunión en minutos."
+             },
+             "presencial": {
+                "bsonType": "bool",
+                "description": "Indica si la reunión es presencial."
+             }
+          },
+          "dependencies": {
+             "idSala": ["idUsuario"]
+          }
+       }
+    }
+ }
+ 

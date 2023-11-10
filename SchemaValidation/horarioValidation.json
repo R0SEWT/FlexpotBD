@@ -1,0 +1,31 @@
+{
+    "validator": {
+       "$jsonSchema": {
+          "bsonType": "object",
+          "required": ["idHorario", "idUsuario", "horaInicio", "horaFin", "diaSemana"],
+          "properties": {
+             "idHorario": {
+                "bsonType": "int",
+                "description": "Identificador del horario, campo requerido."
+             },
+             "idUsuario": {
+                "bsonType": "int",
+                "description": "Identificador del usuario asociado al horario."
+             },
+             "horaInicio": {
+                "bsonType": "string",
+                "description": "Hora de inicio del horario."
+             },
+             "horaFin": {
+                "bsonType": "string",
+                "description": "Hora de fin del horario."
+             },
+             "diaSemana": {
+                "bsonType": "string",
+                "description": "Día de la semana del horario."
+             }
+          }
+       }
+    }
+ }
+ 

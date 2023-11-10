@@ -1,0 +1,35 @@
+{
+    "validator": {
+       "$jsonSchema": {
+          "bsonType": "object",
+          "required": ["idGrabacion", "nombreArchivo", "fechaGrabacion", "duracion", "idSala", "idUsuario"],
+          "properties": {
+             "idGrabacion": {
+                "bsonType": "int",
+                "description": "Identificador de la grabación, campo requerido."
+             },
+             "nombreArchivo": {
+                "bsonType": "string",
+                "description": "Nombre del archivo de grabación."
+             },
+             "fechaGrabacion": {
+                "bsonType": "date",
+                "description": "Fecha de grabación."
+             },
+             "duracion": {
+                "bsonType": "int",
+                "description": "Duración de la grabación en minutos."
+             },
+             "idSala": {
+                "bsonType": "int",
+                "description": "Identificador de la sala asociada a la grabación."
+             },
+             "idUsuario": {
+                "bsonType": "int",
+                "description": "Identificador del usuario asociado a la grabación."
+             }
+          }
+       }
+    }
+ }
+ 

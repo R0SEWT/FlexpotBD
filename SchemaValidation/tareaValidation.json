@@ -1,0 +1,39 @@
+{
+    "validator": {
+       "$jsonSchema": {
+          "bsonType": "object",
+          "required": ["idTarea", "nombre", "fechaEntrega", "fechaInicio", "descripcion", "estado", "idInforme"],
+          "properties": {
+             "idTarea": {
+                "bsonType": "int",
+                "description": "Identificador de la tarea, campo requerido."
+             },
+             "nombre": {
+                "bsonType": "string",
+                "description": "Nombre de la tarea."
+             },
+             "fechaEntrega": {
+                "bsonType": "date",
+                "description": "Fecha de entrega de la tarea."
+             },
+             "fechaInicio": {
+                "bsonType": "date",
+                "description": "Fecha de inicio de la tarea."
+             },
+             "descripcion": {
+                "bsonType": "string",
+                "description": "Descripción de la tarea."
+             },
+             "estado": {
+                "bsonType": "string",
+                "description": "Estado de la tarea."
+             },
+             "idInforme": {
+                "bsonType": "int",
+                "description": "Identificador del informe asociado a la tarea."
+             }
+          }
+       }
+    }
+ }
+ 

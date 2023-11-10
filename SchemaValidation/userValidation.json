@@ -1,0 +1,34 @@
+{
+   "validator": {
+      "$jsonSchema": {
+         "bsonType": "object",
+         "required": ["idUsuario", "nombre", "correoElectronico", "fechaNacimiento", "rol", "activo"],
+         "properties": {
+            "idUsuario": {
+               "bsonType": "int",
+               "description": "Identificador del usuario, campo requerido."
+            },
+            "nombre": {
+               "bsonType": "string",
+               "description": "Nombre completo del usuario."
+            },
+            "correoElectronico": {
+               "bsonType": "string",
+               "description": "Correo electrónico del usuario."
+            },
+            "fechaNacimiento": {
+               "bsonType": "date",
+               "description": "Fecha de nacimiento del usuario."
+            },
+            "rol": {
+               "bsonType": "string",
+               "description": "Cargo que ocupa el usuario en el sistema."
+            },
+            "activo": {
+               "bsonType": "bool",
+               "description": "Indica si el usuario está activo en el sistema."
+            }
+         }
+      }
+   }
+}

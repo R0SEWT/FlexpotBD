@@ -1,0 +1,35 @@
+{
+    "validator": {
+       "$jsonSchema": {
+          "bsonType": "object",
+          "required": ["idProyecto", "nombre", "fechaInicio", "fechaFin", "descripcion", "idUsuarioResponsable"],
+          "properties": {
+             "idProyecto": {
+                "bsonType": "int",
+                "description": "Identificador del proyecto, campo requerido."
+             },
+             "nombre": {
+                "bsonType": "string",
+                "description": "Nombre del proyecto."
+             },
+             "fechaInicio": {
+                "bsonType": "date",
+                "description": "Fecha de inicio del proyecto."
+             },
+             "fechaFin": {
+                "bsonType": "date",
+                "description": "Fecha de fin del proyecto."
+             },
+             "descripcion": {
+                "bsonType": "string",
+                "description": "Descripción del proyecto."
+             },
+             "idUsuarioResponsable": {
+                "bsonType": "int",
+                "description": "Identificador del usuario responsable del proyecto."
+             }
+          }
+       }
+    }
+ }
+ 
