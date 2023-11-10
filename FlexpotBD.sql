@@ -3,7 +3,7 @@ create database DeveloperSquad
 use DeveloperSquad
 
 CREATE TABLE Usuario (
-    idUsuario INT PRIMARY KEY,
+    idUsuario INT NOT NULL PRIMARY KEY,
     nombre VARCHAR(255),
     correoElectronico VARCHAR(255),
     fechaNacimiento DATE,
@@ -12,7 +12,7 @@ CREATE TABLE Usuario (
 );
 
 CREATE TABLE Sala (
-    idSala INT PRIMARY KEY,
+    idSala INT NOT NULL PRIMARY KEY,
     idUsuario INT,
     nombre VARCHAR(255),
     capacidad INT,
@@ -21,7 +21,7 @@ CREATE TABLE Sala (
 );
 
 CREATE TABLE Reunion (
-    idReunion INT PRIMARY KEY,
+    idReunion INT NOT NULL PRIMARY KEY,
     idSala INT,
     idUsuario INT,
     fechaReunion DATETIME,
@@ -32,22 +32,22 @@ CREATE TABLE Reunion (
 );
 
 CREATE TABLE Notificacion (
-    idNotificacion INT PRIMARY KEY,
+    idNotificacion INT NOT NULL PRIMARY KEY,
     mensaje VARCHAR(255),
     fechaEnvio DATETIME,
     leido BIT
 );
 
 CREATE TABLE UsuarioNotificacion (
-    idUsuario INT,
-    idNotificacion INT,
+    idUsuario INT NOT NULL,
+    idNotificacion INT NOT NULL,
     PRIMARY KEY (idUsuario, idNotificacion),
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
     FOREIGN KEY (idNotificacion) REFERENCES Notificacion(idNotificacion)
 );
 
 CREATE TABLE Proyecto (
-    idProyecto INT PRIMARY KEY,
+    idProyecto INT NOT NULL PRIMARY KEY,
     nombre VARCHAR(255),
     fechaInicio DATETIME,
     fechaFin DATETIME,
@@ -57,15 +57,15 @@ CREATE TABLE Proyecto (
 );
 
 CREATE TABLE UsuarioProyecto (
-    idUsuario INT,
-    idProyecto INT,
+    idUsuario INT NOT NULL,
+    idProyecto INT NOT NULL,
     PRIMARY KEY (idUsuario, idProyecto),
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
     FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
 );
 
 CREATE TABLE Asistencia (
-    idAsistencia INT PRIMARY KEY,
+    idAsistencia INT NOT NULL PRIMARY KEY,
     idUsuario INT,
     fechaRegistro DATETIME,
     estado VARCHAR(50),
@@ -73,15 +73,15 @@ CREATE TABLE Asistencia (
 );
 
 CREATE TABLE ReunionAsistencia (
-    idReunion INT,
-    idAsistencia INT,
+    idReunion INT NOT NULL,
+    idAsistencia INT NOT NULL,
     PRIMARY KEY (idReunion, idAsistencia),
     FOREIGN KEY (idReunion) REFERENCES Reunion(idReunion),
     FOREIGN KEY (idAsistencia) REFERENCES Asistencia(idAsistencia)
 );
 
 CREATE TABLE Grabacion (
-    idGrabacion INT PRIMARY KEY,
+    idGrabacion INT NOT NULL PRIMARY KEY,
     nombreArchivo VARCHAR(255),
     fechaGrabacion DATETIME,
     duracion INT,
@@ -91,8 +91,10 @@ CREATE TABLE Grabacion (
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 );
 
+
+
 CREATE TABLE Informe (
-    idInforme INT PRIMARY KEY,
+    idInforme INT NOT NULL PRIMARY KEY,
     titulo VARCHAR(255),
     fechaCreacion DATETIME,
     contenido TEXT,
@@ -100,10 +102,8 @@ CREATE TABLE Informe (
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 );
 
-
-
 CREATE TABLE Tarea (
-    idTarea INT PRIMARY KEY,
+    idTarea INT NOT NULL PRIMARY KEY,
     nombre VARCHAR(255),
     fechaEntrega DATETIME,
     fechaInicio DATETIME,
@@ -114,15 +114,15 @@ CREATE TABLE Tarea (
 );
 
 CREATE TABLE ProyectoTarea (
-    idProyecto INT,
-    idTarea INT,
+    idProyecto INT NOT NULL,
+    idTarea INT NOT NULL,
     PRIMARY KEY (idProyecto, idTarea),
     FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto),
     FOREIGN KEY (idTarea) REFERENCES Tarea(idTarea)
 );
 
 CREATE TABLE Mensaje (
-    idMensaje INT PRIMARY KEY,
+    idMensaje INT NOT NULL PRIMARY KEY,
     contenido TEXT,
     fechaEnvio DATETIME,
     idUsuario INT,
@@ -130,7 +130,7 @@ CREATE TABLE Mensaje (
 );
 
 CREATE TABLE Horario (
-    idHorario INT PRIMARY KEY,
+    idHorario INT NOT NULL PRIMARY KEY,
     idUsuario INT,
     horaInicio TIME,
     horaFin TIME,
@@ -139,16 +139,16 @@ CREATE TABLE Horario (
 );
 
 CREATE TABLE FormularioAsistencia (
-    idFormularioAsistencia INT PRIMARY KEY,
+    idFormularioAsistencia INT NOT NULL PRIMARY KEY,
     idReunion INT,
     pregunta VARCHAR(255),
     FOREIGN KEY (idReunion) REFERENCES Reunion(idReunion)
 );
 
 CREATE TABLE RespuestaFormularioAsistencia (
-    idRespuestaFormularioAsistencia INT PRIMARY KEY,
-    idUsuario INT,
-    idFormularioAsistencia INT,
+    idRespuestaFormularioAsistencia INT NOT NULL PRIMARY KEY,
+    idUsuario INT NOT NULL,
+    idFormularioAsistencia INT NOT NULL,
     respuesta VARCHAR(255),
     FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
     FOREIGN KEY (idFormularioAsistencia) REFERENCES FormularioAsistencia(idFormularioAsistencia)
@@ -200,6 +200,7 @@ VALUES
 (10,10,'Mejoras en la interfaz de usuario', '2023-12-15 09:15:00', '2023-11-25 13:45:00', 'Implementaci�n de mejoras visuales en la interfaz de usuario.', 'En progreso')
 
 select * from Tarea
+
 
 INSERT INTO Sala (idSala, idUsuario, nombre, capacidad, ubicacion)
 VALUES
