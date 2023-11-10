@@ -2,118 +2,128 @@ create database DeveloperSquad
 use DeveloperSquad
 
 CREATE TABLE Usuario(
-	ID_Usuario int NOT NULL PRIMARY KEY IDENTITY(10000, 1),
+	ID_Usuario int NOT NULL PRIMARY KEY IDENTITY(1, 1),
 	Nombre varchar(255) NOT NULL,
 	CorreoElectronico varchar(511) NOT NULL UNIQUE,
 	Rol varchar(255) NOT NULL,
-	EsActivo bit NOT NULL,
+	EsActivo bit NOT NULL
 	
 );
 
+CREATE TABLE Sala (
+    ID_Sala INT PRIMARY KEY IDENTITY(1, 1),
+    ID_Anfitrion INT NOT NULL,
+    Nombre VARCHAR(250) NOT NULL,
+    Capacidad INT NOT NULL,
+    Ubicacion VARCHAR(250) NOT NULL,
+    FOREIGN KEY (ID_Anfitrion) REFERENCES Usuario(ID_Usuario)
+);
+
+CREATE TABLE Asistencia (
+    ID_Asistencia int NOT NULL PRIMARY KEY IDENTITY(1, 1),
+    ID_Usuario INT NOT NULL,
+    FechaRegistro datetime NOT NULL,
+    Estado varchar(250) NOT NULL,
+    FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
+);
+
+CREATE TABLE Grabacion (
+    ID_Grabacion int NOT NULL PRIMARY KEY IDENTITY(1, 1),
+    ID_Sala int NOT NULL,
+    NombreArchivo varchar(500) NOT NULL,
+    FechaGrabacion datetime NOT NULL,
+    Duracion TIME NOT NULL,
+    FOREIGN KEY (ID_Sala) REFERENCES Sala(ID_Sala)
+
+);
+
+CREATE TABLE Horario
+ 
+	ID_Horario integer  PRIMARY KEY IDENTITY(1, 1),
+	ID_Usuario integer  NOT NULL ,
+	DiaSemana varchar(20) NOT NULL ,
+	HoraInicio TIME  NOT NULL ,
+	HoraFin TIME  NOT NULL,
+    FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
+
+;
+
+CREATE TABLE Informe (
+    ID_Informe int NOT NULL PRIMARY KEY IDENTITY(1, 1),
+	ID_Tarea int NOT NULL,
+    Titulo varchar(500) NOT NULL,
+    FechaCreacion datetime NOT NULL,
+    Contenido varchar(4090) NOT NULL,
+	FOREIGN KEY (ID_Tarea) REFERENCES Tarea(ID_Tarea)
+);
+
 CREATE TABLE Mensaje (
-    ID_Mensaje int NOT NULL PRIMARY KEY IDENTITY(1000, 1),
+    ID_Mensaje int NOT NULL PRIMARY KEY IDENTITY(1, 1),
+    ID_Usuario int NOT NULL,
     Contenido varchar(500) NOT NULL,
     FechaEnvio datetime NOT NULL
+    FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 );
 
 CREATE TABLE Notificacion (
-    ID_Notificacion int NOT NULL PRIMARY KEY IDENTITY(100000, 1),
+    ID_Notificacion int NOT NULL PRIMARY KEY IDENTITY(1, 1),
     Mensaje varchar(500) NOT NULL,
     FechaEnvio datetime NOT NULL,
     EsLeido bit NOT NULL
 );
 
 CREATE TABLE Proyecto (
-    ID_Proyecto int NOT NULL PRIMARY KEY IDENTITY(1000, 1),
+    ID_Proyecto int NOT NULL PRIMARY KEY IDENTITY(1, 1),
     Nombre varchar(250) NOT NULL,
     FechaIncio datetime NOT NULL,
     FechaFin datetime NOT NULL,
     Descripcion varchar(1000) NOT NULL
 );
 
-CREATE TABLE Sala (
-    ID_Sala int NOT NULL PRIMARY KEY IDENTITY(100, 1),
-    Nombre varchar(250) NOT NULL,
-    Capacidad int NOT NULL,
-    Ubicacion varchar(250) NOT NULL
-);
+
 
 CREATE TABLE Tarea (
-    ID_Tarea int NOT NULL PRIMARY KEY IDENTITY(1000, 1),
+    ID_Tarea int NOT NULL PRIMARY KEY IDENTITY(1, 1),
     Nombre varchar(250) NOT NULL,
     FechaEntrega datetime NOT NULL,
     FechaIncio datetime NOT NULL,
     Descripcion varchar(500) NOT NULL,
     Estado varchar(250) NOT NULL
-);
+);  
 
-CREATE TABLE Asistencia (
-    ID_Asistencia int NOT NULL PRIMARY KEY IDENTITY(1000, 1),
-    FechaRegistro datetime NOT NULL,
-    Estado varchar(250) NOT NULL
-);
+CREATE TABLE [Reunion]
+( 
+	[ID_Reunion]         integer PRIMARY KEY ,
+	[ID_Sala]            integer  NOT NULL ,
+	[fechaReunion]       datetime  NULL ,
+	[duracionReunion]    varchar(20)  NULL,
+    FOREIGN KEY (ID_Sala) REFERENCES Sala(ID_Sala)
+)
+go
 
-CREATE TABLE Grabacion (
-    ID_Grabacion int NOT NULL PRIMARY KEY IDENTITY(100, 1),
-    NombreArchivo varchar(500) NOT NULL,
-    FechaGrabacion datetime NOT NULL,
-    Duracion TIME NOT NULL,
-);
-
-CREATE TABLE Informe (
-    ID_Informe int NOT NULL PRIMARY KEY IDENTITY(100, 1),
-	ID_Tarea int NOT NULL,
-    Titulo varchar(500) NOT NULL,
-    FechaCreacion datetime NOT NULL,
-    Contenido varchar(4090) NOT NULL,
-	FOREIGN KEY (ID_Tarea) REFERENCES Tarea(ID_Tarea),
-);
-
-CREATE TABLE Mensaje_Destinatario (
-    ID_Mensaje int NOT NULL,
-    ID_Usuario int NOT NULL,
-	FOREIGN KEY (ID_Mensaje) REFERENCES Mensaje(ID_Mensaje),
+CREATE TABLE [RepuestaAsistencia] (
+    [ID_RespuestaAsistencia] int NOT NULL PRIMARY KEY IDENTITY(1, 1),
+    [ID_FomularioAsistencia] int NOT NULL,
+    [ID_Usuario]         integer  NOT NULL ,
 	FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
 
 );
-
-CREATE TABLE Mensaje_Remitente (
-    ID_Usuario int NOT NULL,
-    ID_Mensaje int NOT NULL
-	FOREIGN KEY (ID_Mensaje) REFERENCES Mensaje(ID_Mensaje),
-	FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
-);
-
 
 CREATE TABLE Proyecto_Tarea (
     ID_Proyecto int NOT NULL,
-    ID_Tarea int NOT NULL
+    ID_Tarea int NOT NULL,
 	FOREIGN KEY (ID_Proyecto) REFERENCES Proyecto(ID_Proyecto),
 	FOREIGN KEY (ID_Tarea) REFERENCES Tarea(ID_Tarea)
 );
 
-
-CREATE TABLE Sala_Asistencia (
-    ID_Sala int NOT NULL,
-    ID_Asistencia int NOT NULL
-	FOREIGN KEY (ID_Sala) REFERENCES Sala(ID_Sala),
-	FOREIGN KEY (ID_Asistencia) REFERENCES Asistencia(ID_Asistencia)
-);
-
-
-CREATE TABLE Tarea_Sala (
-    ID_Tarea int NOT NULL,
-    ID_Sala int NOT NULL
-	FOREIGN KEY (ID_Sala) REFERENCES Sala(ID_Sala),
-	FOREIGN KEY (ID_Tarea) REFERENCES Tarea(ID_Tarea)
-);
-
-CREATE TABLE Usuario_Asistencia (
-    ID_Usuario int NOT NULL,
-    ID_Asistencia int NOT NULL
-	FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario),
-	FOREIGN KEY (ID_Asistencia) REFERENCES Asistencia(ID_Asistencia)
-);
+CREATE TABLE [Reunion_Asistencia]
+( 
+	[ID_Reunion]         integer  NOT NULL ,
+	[ID_Asistencia]      integer  NOT NULL,
+    FOREIGN KEY (ID_Reunion) REFERENCES Reunion(ID_Reunion),
+    FOREIGN KEY (ID_Asistencia) REFERENCES Asistencia(ID_Asistencia)
+)
+go
 
 CREATE TABLE Usuario_Notificacion (
     ID_Usuario int NOT NULL,
@@ -129,38 +139,22 @@ CREATE TABLE Usuario_Proyecto (
 	FOREIGN KEY (ID_Proyecto) REFERENCES Proyecto(ID_Proyecto)
 );
 
-CREATE TABLE Usuario_Tarea (
-    ID_Usuario int NOT NULL,
-    ID_Tarea int NOT NULL
-	FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario),
-	FOREIGN KEY (ID_Tarea) REFERENCES Tarea(ID_Tarea)
-
-);
-
-CREATE TABLE Sala_Grabacion (
-    ID_Sala int NOT NULL,
-    ID_Grabacion int NOT NULL
-	FOREIGN KEY (ID_Sala) REFERENCES Sala(ID_Sala),
-	FOREIGN KEY (ID_Grabacion) REFERENCES Grabacion(ID_Grabacion)
-
-);
-
-///////SCRIPT PARA INSERCION DE DATOS/////
+///////SCRIPT PARA INSERCION DE DATOS falta modificar/////
 INSERT INTO dbo.Usuario(Nombre, CorreoElectronico, Rol, EsActivo)
-VALUES('María López', 'marialopez@example.com', 'Administrador', 1),
-('Javier García', 'javiergarcia@example.com', 'Usuario Regular', 1),
-('Ana Martínez', 'anamartinez@example.com', 'Usuario Regular', 0),
-('Carlos Rodríguez', 'carlosrodriguez@example.com', 'Moderador', 1),
-('Sofía Pérez', 'sofiaperez@example.com', 'Usuario Regular', 1),
-('Manuel Fernández', 'manuelfernandez@example.com', 'Moderador', 0),
-('Laura González', 'lauragonzalez@example.com', 'Usuario Regular', 1),
+VALUES('Marï¿½a Lï¿½pez', 'marialopez@example.com', 'Administrador', 1),
+('Javier Garcï¿½a', 'javiergarcia@example.com', 'Usuario Regular', 1),
+('Ana Martï¿½nez', 'anamartinez@example.com', 'Usuario Regular', 0),
+('Carlos Rodrï¿½guez', 'carlosrodriguez@example.com', 'Moderador', 1),
+('Sofï¿½a Pï¿½rez', 'sofiaperez@example.com', 'Usuario Regular', 1),
+('Manuel Fernï¿½ndez', 'manuelfernandez@example.com', 'Moderador', 0),
+('Laura Gonzï¿½lez', 'lauragonzalez@example.com', 'Usuario Regular', 1),
 ('Antonio Torres', 'antoniotorres@example.com', 'Administrador', 0),
-('Carmen Ramírez', 'carmenramirez@example.com', 'Usuario Regular', 1),
-('Diego Sánchez', 'diegosanchez@example.com', 'Moderador', 1),
+('Carmen Ramï¿½rez', 'carmenramirez@example.com', 'Usuario Regular', 1),
+('Diego Sï¿½nchez', 'diegosanchez@example.com', 'Moderador', 1),
 ('Isabel Ruiz', 'isabelruiz@example.com', 'Administrador', 0),
 ('Juan Mendoza', 'juanmendoza@example.com', 'Moderador', 1),
-('Lucía Morales', 'luciamorales@example.com', 'Usuario Regular', 0),
-('José Castro', 'josecastro@example.com', 'Administrador', 1),
+('Lucï¿½a Morales', 'luciamorales@example.com', 'Usuario Regular', 0),
+('Josï¿½ Castro', 'josecastro@example.com', 'Administrador', 1),
 ('Marta Herrera', 'martaherrera@example.com', 'Moderador', 0);
 
 select * from Usuario
@@ -168,19 +162,19 @@ select * from Usuario
 
 INSERT INTO Tarea (Nombre, FechaEntrega, FechaIncio, Descripcion, Estado)
 VALUES
-('Desarrollo de la función de registro', '2023-10-30 14:00:00', '2023-10-25 10:00:00', 'Implementación de la función de registro de usuarios en la aplicación.', 'En progreso'),
-('Prueba de rendimiento del servidor', '2023-11-05 16:30:00', '2023-10-27 08:45:00', 'Realización de pruebas de carga para evaluar el rendimiento del servidor.', 'Pendiente'),
-('Revisión de documentación técnica', '2023-11-10 13:15:00', '2023-10-29 11:20:00', 'Revisión de la documentación técnica de la aplicación para asegurarse de que esté actualizada.', 'Completada'),
-('Desarrollo de la interfaz de usuario', '2023-11-15 09:45:00', '2023-10-31 14:30:00', 'Diseño e implementación de la interfaz de usuario de la aplicación.', 'En progreso'),
-('Pruebas de usabilidad', '2023-11-20 12:30:00', '2023-11-02 07:55:00', 'Realización de pruebas de usabilidad con usuarios beta.', 'Pendiente'),
-('Reunión de revisión del proyecto', '2023-11-25 15:20:00', '2023-11-04 10:15:00', 'Reunión de revisión del proyecto con el equipo de desarrollo.', 'Completada'),
-('Optimización de base de datos', '2023-11-30 10:00:00', '2023-11-10 14:30:00', 'Optimización y ajuste de rendimiento de la base de datos del sistema.', 'Pendiente'),
-('Desarrollo de módulo de notificaciones', '2023-12-05 11:45:00', '2023-11-15 09:30:00', 'Implementación del módulo de notificaciones para alertar a los usuarios.', 'En progreso'),
-('Prueba de seguridad de la aplicación', '2023-12-10 14:30:00', '2023-11-20 08:15:00', 'Realización de pruebas de seguridad para identificar vulnerabilidades.', 'Pendiente'),
-('Mejoras en la interfaz de usuario', '2023-12-15 09:15:00', '2023-11-25 13:45:00', 'Implementación de mejoras visuales en la interfaz de usuario.', 'En progreso'),
-('Planificación de la próxima fase del proyecto', '2023-12-20 15:00:00', '2023-11-30 12:30:00', 'Reunión para planificar la siguiente etapa del proyecto.', 'Completada'),
-('Revisión de informes de progreso', '2023-12-25 16:30:00', '2023-12-04 10:00:00', 'Revisión de informes de progreso del proyecto.', 'Pendiente'),
-('Pruebas finales y ajustes', '2023-12-30 17:15:00', '2023-12-10 09:45:00', 'Realización de pruebas finales y ajustes antes del lanzamiento.', 'Pendiente');
+('Desarrollo de la funciï¿½n de registro', '2023-10-30 14:00:00', '2023-10-25 10:00:00', 'Implementaciï¿½n de la funciï¿½n de registro de usuarios en la aplicaciï¿½n.', 'En progreso'),
+('Prueba de rendimiento del servidor', '2023-11-05 16:30:00', '2023-10-27 08:45:00', 'Realizaciï¿½n de pruebas de carga para evaluar el rendimiento del servidor.', 'Pendiente'),
+('Revisiï¿½n de documentaciï¿½n tï¿½cnica', '2023-11-10 13:15:00', '2023-10-29 11:20:00', 'Revisiï¿½n de la documentaciï¿½n tï¿½cnica de la aplicaciï¿½n para asegurarse de que estï¿½ actualizada.', 'Completada'),
+('Desarrollo de la interfaz de usuario', '2023-11-15 09:45:00', '2023-10-31 14:30:00', 'Diseï¿½o e implementaciï¿½n de la interfaz de usuario de la aplicaciï¿½n.', 'En progreso'),
+('Pruebas de usabilidad', '2023-11-20 12:30:00', '2023-11-02 07:55:00', 'Realizaciï¿½n de pruebas de usabilidad con usuarios beta.', 'Pendiente'),
+('Reuniï¿½n de revisiï¿½n del proyecto', '2023-11-25 15:20:00', '2023-11-04 10:15:00', 'Reuniï¿½n de revisiï¿½n del proyecto con el equipo de desarrollo.', 'Completada'),
+('Optimizaciï¿½n de base de datos', '2023-11-30 10:00:00', '2023-11-10 14:30:00', 'Optimizaciï¿½n y ajuste de rendimiento de la base de datos del sistema.', 'Pendiente'),
+('Desarrollo de mï¿½dulo de notificaciones', '2023-12-05 11:45:00', '2023-11-15 09:30:00', 'Implementaciï¿½n del mï¿½dulo de notificaciones para alertar a los usuarios.', 'En progreso'),
+('Prueba de seguridad de la aplicaciï¿½n', '2023-12-10 14:30:00', '2023-11-20 08:15:00', 'Realizaciï¿½n de pruebas de seguridad para identificar vulnerabilidades.', 'Pendiente'),
+('Mejoras en la interfaz de usuario', '2023-12-15 09:15:00', '2023-11-25 13:45:00', 'Implementaciï¿½n de mejoras visuales en la interfaz de usuario.', 'En progreso'),
+('Planificaciï¿½n de la prï¿½xima fase del proyecto', '2023-12-20 15:00:00', '2023-11-30 12:30:00', 'Reuniï¿½n para planificar la siguiente etapa del proyecto.', 'Completada'),
+('Revisiï¿½n de informes de progreso', '2023-12-25 16:30:00', '2023-12-04 10:00:00', 'Revisiï¿½n de informes de progreso del proyecto.', 'Pendiente'),
+('Pruebas finales y ajustes', '2023-12-30 17:15:00', '2023-12-10 09:45:00', 'Realizaciï¿½n de pruebas finales y ajustes antes del lanzamiento.', 'Pendiente');
 
 
 select * from Tarea
@@ -188,60 +182,60 @@ select * from Tarea
 
 INSERT INTO Mensaje (Contenido, FechaEnvio)
 VALUES
-('Reunión de equipo a las 11 AM para discutir el progreso del proyecto.', '2023-10-30 10:30:00'),
-('Nueva actualización del software se lanzará la próxima semana. Asegúrate de que todas las pruebas estén completas.', '2023-11-05 14:15:00'),
-('Se requiere una revisión del código para la funcionalidad de inicio de sesión.', '2023-11-10 09:00:00'),
-('¡Buen trabajo en la corrección de errores en el módulo de pagos!', '2023-11-15 16:00:00'),
-('La reunión de planificación del proyecto se pospone para mañana a las 2 PM.', '2023-11-20 13:30:00'),
-('Por favor, asegúrense de documentar cualquier cambio importante en el repositorio de código.', '2023-11-25 12:45:00'),
-('El cliente ha solicitado una demostración del producto para la próxima semana. Preparen una presentación.', '2023-12-01 11:15:00'),
-('Nueva contratación: Bienvenido Juan Pérez, nuestro nuevo desarrollador junior.', '2023-12-05 10:00:00'),
+('Reuniï¿½n de equipo a las 11 AM para discutir el progreso del proyecto.', '2023-10-30 10:30:00'),
+('Nueva actualizaciï¿½n del software se lanzarï¿½ la prï¿½xima semana. Asegï¿½rate de que todas las pruebas estï¿½n completas.', '2023-11-05 14:15:00'),
+('Se requiere una revisiï¿½n del cï¿½digo para la funcionalidad de inicio de sesiï¿½n.', '2023-11-10 09:00:00'),
+('ï¿½Buen trabajo en la correcciï¿½n de errores en el mï¿½dulo de pagos!', '2023-11-15 16:00:00'),
+('La reuniï¿½n de planificaciï¿½n del proyecto se pospone para maï¿½ana a las 2 PM.', '2023-11-20 13:30:00'),
+('Por favor, asegï¿½rense de documentar cualquier cambio importante en el repositorio de cï¿½digo.', '2023-11-25 12:45:00'),
+('El cliente ha solicitado una demostraciï¿½n del producto para la prï¿½xima semana. Preparen una presentaciï¿½n.', '2023-12-01 11:15:00'),
+('Nueva contrataciï¿½n: Bienvenido Juan Pï¿½rez, nuestro nuevo desarrollador junior.', '2023-12-05 10:00:00'),
 ('Recordatorio: Actualiza tus horas trabajadas en el sistema de seguimiento de proyectos.', '2023-12-10 15:30:00'),
-('El servidor de pruebas estará en mantenimiento esta noche de 9 PM a 11 PM.', '2023-12-15 08:20:00'),
-('Reunión de sprint a las 3 PM para discutir los objetivos de la próxima iteración.', '2023-12-20 14:45:00'),
-('Se requiere retroalimentación sobre la interfaz de usuario del nuevo módulo de administración.', '2023-12-25 10:10:00'),
-('Por favor, asegúrense de que todos los informes de errores estén actualizados antes del lanzamiento.', '2023-12-30 16:30:00'),
-('Necesitamos cubrir el turno de guardia para el soporte al cliente esta noche. ¿Quién puede hacerlo?', '2024-01-05 11:45:00'),
-('Recuerda la capacitación de seguridad programada para mañana a las 9 AM.', '2024-01-10 12:55:00');
+('El servidor de pruebas estarï¿½ en mantenimiento esta noche de 9 PM a 11 PM.', '2023-12-15 08:20:00'),
+('Reuniï¿½n de sprint a las 3 PM para discutir los objetivos de la prï¿½xima iteraciï¿½n.', '2023-12-20 14:45:00'),
+('Se requiere retroalimentaciï¿½n sobre la interfaz de usuario del nuevo mï¿½dulo de administraciï¿½n.', '2023-12-25 10:10:00'),
+('Por favor, asegï¿½rense de que todos los informes de errores estï¿½n actualizados antes del lanzamiento.', '2023-12-30 16:30:00'),
+('Necesitamos cubrir el turno de guardia para el soporte al cliente esta noche. ï¿½Quiï¿½n puede hacerlo?', '2024-01-05 11:45:00'),
+('Recuerda la capacitaciï¿½n de seguridad programada para maï¿½ana a las 9 AM.', '2024-01-10 12:55:00');
 
 select * from Mensaje
 
 INSERT INTO Notificacion (Mensaje, FechaEnvio, EsLeido)
 VALUES
 ('Recuerda completar tu informe de progreso antes del fin de semana.', '2023-10-30 10:00:00', 1),
-('La reunión semanal de equipo es a las 3 PM. ¡No faltes!', '2023-11-05 14:30:00', 0),
+('La reuniï¿½n semanal de equipo es a las 3 PM. ï¿½No faltes!', '2023-11-05 14:30:00', 0),
 ('Tus horas trabajadas para este proyecto deben registrarse hoy.', '2023-11-10 09:15:00', 1),
-('El cliente ha solicitado una demostración del producto para la próxima semana.', '2023-11-15 16:15:00', 0),
-('¡No olvides revisar los comentarios en el código antes de la revisión de pares!', '2023-11-20 13:45:00', 1),
-('Revisión urgente del informe de errores para el módulo de facturación.', '2023-11-25 12:55:00', 1),
-('Recuerda la capacitación de seguridad programada para mañana a las 9 AM.', '2023-12-01 10:10:00', 0),
+('El cliente ha solicitado una demostraciï¿½n del producto para la prï¿½xima semana.', '2023-11-15 16:15:00', 0),
+('ï¿½No olvides revisar los comentarios en el cï¿½digo antes de la revisiï¿½n de pares!', '2023-11-20 13:45:00', 1),
+('Revisiï¿½n urgente del informe de errores para el mï¿½dulo de facturaciï¿½n.', '2023-11-25 12:55:00', 1),
+('Recuerda la capacitaciï¿½n de seguridad programada para maï¿½ana a las 9 AM.', '2023-12-01 10:10:00', 0),
 ('Recordatorio: Actualiza tus horas trabajadas en el sistema de seguimiento de proyectos.', '2023-12-05 11:00:00', 1),
-('Nueva actualización del software se lanzará la próxima semana. Asegúrate de que todas las pruebas estén completas.', '2023-12-10 15:45:00', 0),
-('Reunión de sprint a las 3 PM para discutir los objetivos de la próxima iteración.', '2023-12-15 08:30:00', 1),
-('Se requiere retroalimentación sobre la interfaz de usuario del nuevo módulo de administración.', '2023-12-20 14:50:00', 1),
-('El servidor de pruebas estará en mantenimiento esta noche de 9 PM a 11 PM.', '2023-12-25 10:30:00', 0),
-('Necesitamos cubrir el turno de guardia para el soporte al cliente esta noche. ¿Quién puede hacerlo?', '2023-12-30 16:00:00', 1),
-('Por favor, asegúrense de documentar cualquier cambio importante en el repositorio de código.', '2024-01-05 11:35:00', 1),
-('Nueva contratación: Bienvenido Juan Pérez, nuestro nuevo desarrollador junior.', '2024-01-10 13:10:00', 0);
+('Nueva actualizaciï¿½n del software se lanzarï¿½ la prï¿½xima semana. Asegï¿½rate de que todas las pruebas estï¿½n completas.', '2023-12-10 15:45:00', 0),
+('Reuniï¿½n de sprint a las 3 PM para discutir los objetivos de la prï¿½xima iteraciï¿½n.', '2023-12-15 08:30:00', 1),
+('Se requiere retroalimentaciï¿½n sobre la interfaz de usuario del nuevo mï¿½dulo de administraciï¿½n.', '2023-12-20 14:50:00', 1),
+('El servidor de pruebas estarï¿½ en mantenimiento esta noche de 9 PM a 11 PM.', '2023-12-25 10:30:00', 0),
+('Necesitamos cubrir el turno de guardia para el soporte al cliente esta noche. ï¿½Quiï¿½n puede hacerlo?', '2023-12-30 16:00:00', 1),
+('Por favor, asegï¿½rense de documentar cualquier cambio importante en el repositorio de cï¿½digo.', '2024-01-05 11:35:00', 1),
+('Nueva contrataciï¿½n: Bienvenido Juan Pï¿½rez, nuestro nuevo desarrollador junior.', '2024-01-10 13:10:00', 0);
 select * from Notificacion
 
 INSERT INTO Proyecto (Nombre, FechaIncio, FechaFin, Descripcion)
 VALUES
-('Desarrollo de una aplicación de gestión de proyectos', '2023-10-30 00:00:00', '2023-11-30 23:59:59', 'Desarrollo de una aplicación completa para gestionar proyectos y tareas.'),
-('Migración a la nube de un sistema de gestión empresarial', '2023-11-01 00:00:00', '2023-12-01 23:59:59', 'Migración de un sistema empresarial a la nube para mejorar la escalabilidad.'),
-('Desarrollo de una plataforma de comercio electrónico', '2023-11-15 00:00:00', '2023-12-15 23:59:59', 'Creación de una plataforma de comercio electrónico para una tienda en línea.'),
-('Optimización de una base de datos de gran escala', '2023-11-30 00:00:00', '2023-12-30 23:59:59', 'Mejora del rendimiento y escalabilidad de una base de datos empresarial.'),
-('Desarrollo de una aplicación móvil de salud', '2023-12-01 00:00:00', '2024-01-01 23:59:59', 'Creación de una aplicación móvil para el seguimiento de la salud y el estado físico.'),
-('Implementación de un sistema de gestión de contenidos', '2023-12-15 00:00:00', '2024-01-15 23:59:59', 'Desarrollo e implementación de un CMS para un sitio web.'),
-('Desarrollo de un motor de recomendación de contenido', '2024-01-01 00:00:00', '2024-02-01 23:59:59', 'Creación de un motor de recomendación de contenido personalizado.'),
-('Creación de una aplicación de análisis de datos', '2024-01-15 00:00:00', '2024-02-15 23:59:59', 'Desarrollo de una aplicación para analizar grandes conjuntos de datos.'),
-('Mejora de la seguridad de una aplicación de banca en línea', '2024-02-01 00:00:00', '2024-03-01 23:59:59', 'Revisión y mejora de la seguridad de una aplicación financiera en línea.'),
-('Desarrollo de un sistema de gestión de recursos humanos', '2024-02-15 00:00:00', '2024-03-15 23:59:59', 'Creación de un sistema de gestión de RRHH para una empresa.'),
-('Optimización de la infraestructura de servidor', '2024-03-01 00:00:00', '2024-04-01 23:59:59', 'Mejora del rendimiento y la eficiencia de los servidores de la empresa.'),
-('Desarrollo de un portal de e-learning', '2024-03-15 00:00:00', '2024-04-15 23:59:59', 'Creación de un portal de educación en línea para cursos y capacitación.'),
-('Migración a una plataforma de gestión de proyectos', '2024-04-01 00:00:00', '2024-05-01 23:59:59', 'Migración a una nueva plataforma para la gestión de proyectos y colaboración.'),
-('Desarrollo de un sistema de información geográfica', '2024-04-15 00:00:00', '2024-05-15 23:59:59', 'Creación de un sistema para la visualización y análisis de datos geoespaciales.'),
-('Implementación de un sistema de chat en tiempo real', '2024-05-01 00:00:00', '2024-06-01 23:59:59', 'Integración de un sistema de chat en tiempo real en una aplicación existente.');
+('Desarrollo de una aplicaciï¿½n de gestiï¿½n de proyectos', '2023-10-30 00:00:00', '2023-11-30 23:59:59', 'Desarrollo de una aplicaciï¿½n completa para gestionar proyectos y tareas.'),
+('Migraciï¿½n a la nube de un sistema de gestiï¿½n empresarial', '2023-11-01 00:00:00', '2023-12-01 23:59:59', 'Migraciï¿½n de un sistema empresarial a la nube para mejorar la escalabilidad.'),
+('Desarrollo de una plataforma de comercio electrï¿½nico', '2023-11-15 00:00:00', '2023-12-15 23:59:59', 'Creaciï¿½n de una plataforma de comercio electrï¿½nico para una tienda en lï¿½nea.'),
+('Optimizaciï¿½n de una base de datos de gran escala', '2023-11-30 00:00:00', '2023-12-30 23:59:59', 'Mejora del rendimiento y escalabilidad de una base de datos empresarial.'),
+('Desarrollo de una aplicaciï¿½n mï¿½vil de salud', '2023-12-01 00:00:00', '2024-01-01 23:59:59', 'Creaciï¿½n de una aplicaciï¿½n mï¿½vil para el seguimiento de la salud y el estado fï¿½sico.'),
+('Implementaciï¿½n de un sistema de gestiï¿½n de contenidos', '2023-12-15 00:00:00', '2024-01-15 23:59:59', 'Desarrollo e implementaciï¿½n de un CMS para un sitio web.'),
+('Desarrollo de un motor de recomendaciï¿½n de contenido', '2024-01-01 00:00:00', '2024-02-01 23:59:59', 'Creaciï¿½n de un motor de recomendaciï¿½n de contenido personalizado.'),
+('Creaciï¿½n de una aplicaciï¿½n de anï¿½lisis de datos', '2024-01-15 00:00:00', '2024-02-15 23:59:59', 'Desarrollo de una aplicaciï¿½n para analizar grandes conjuntos de datos.'),
+('Mejora de la seguridad de una aplicaciï¿½n de banca en lï¿½nea', '2024-02-01 00:00:00', '2024-03-01 23:59:59', 'Revisiï¿½n y mejora de la seguridad de una aplicaciï¿½n financiera en lï¿½nea.'),
+('Desarrollo de un sistema de gestiï¿½n de recursos humanos', '2024-02-15 00:00:00', '2024-03-15 23:59:59', 'Creaciï¿½n de un sistema de gestiï¿½n de RRHH para una empresa.'),
+('Optimizaciï¿½n de la infraestructura de servidor', '2024-03-01 00:00:00', '2024-04-01 23:59:59', 'Mejora del rendimiento y la eficiencia de los servidores de la empresa.'),
+('Desarrollo de un portal de e-learning', '2024-03-15 00:00:00', '2024-04-15 23:59:59', 'Creaciï¿½n de un portal de educaciï¿½n en lï¿½nea para cursos y capacitaciï¿½n.'),
+('Migraciï¿½n a una plataforma de gestiï¿½n de proyectos', '2024-04-01 00:00:00', '2024-05-01 23:59:59', 'Migraciï¿½n a una nueva plataforma para la gestiï¿½n de proyectos y colaboraciï¿½n.'),
+('Desarrollo de un sistema de informaciï¿½n geogrï¿½fica', '2024-04-15 00:00:00', '2024-05-15 23:59:59', 'Creaciï¿½n de un sistema para la visualizaciï¿½n y anï¿½lisis de datos geoespaciales.'),
+('Implementaciï¿½n de un sistema de chat en tiempo real', '2024-05-01 00:00:00', '2024-06-01 23:59:59', 'Integraciï¿½n de un sistema de chat en tiempo real en una aplicaciï¿½n existente.');
 
 select * from Proyecto
 
@@ -308,17 +302,17 @@ select * from Grabacion
 
 INSERT INTO Informe (ID_Tarea, Titulo, FechaCreacion, Contenido)
 VALUES
-(1000, 'Informe de avance de desarrollo', '2023-10-30 14:15:00', 'Hoy se completaron las primeras etapas del desarrollo del módulo de autenticación.'),
-(1001, 'Informe de pruebas de migración', '2023-11-05 10:30:00', 'Se realizaron pruebas de migración a la nube y se identificaron algunas áreas de mejora.'),
-(1002, 'Informe de lanzamiento de plataforma', '2023-11-10 13:20:00', 'La plataforma de comercio electrónico se lanzará oficialmente la próxima semana.'),
-(1003, 'Informe de revisión de base de datos', '2023-11-15 09:45:00', 'Se completó la revisión de la base de datos y se implementaron las mejoras necesarias.'),
-(1004, 'Informe de pruebas de aplicación móvil', '2023-11-20 12:00:00', 'Se realizaron pruebas exhaustivas en la aplicación móvil de salud y se corrigieron errores identificados.'),
-(1005, 'Informe de lanzamiento de CMS', '2023-11-25 16:10:00', 'El sistema de gestión de contenidos se lanzó con éxito y está funcionando correctamente.'),
-(1006, 'Informe de retroalimentación de usuarios', '2023-12-01 11:30:00', 'Los usuarios proporcionaron retroalimentación positiva sobre la interfaz de usuario del nuevo módulo de administración.'),
-(1007, 'Informe de capacitación de seguridad', '2023-12-05 14:00:00', 'La capacitación de seguridad se llevó a cabo según lo programado y se cubrieron temas importantes.'),
-(1008, 'Informe de pruebas de seguridad', '2023-12-10 09:15:00', 'Se completaron las pruebas de seguridad en la aplicación de banca en línea y se identificaron vulnerabilidades menores.'),
-(1009, 'Informe de lanzamiento de RRHH', '2023-12-15 12:45:00', 'El sistema de gestión de recursos humanos se lanzó con éxito y se brindó capacitación al personal.'),
-(1010, 'Informe de mantenimiento de servidores', '2023-12-20 16:20:00', 'Se realizó el mantenimiento programado de los servidores y se mejoró el rendimiento.')
+(1000, 'Informe de avance de desarrollo', '2023-10-30 14:15:00', 'Hoy se completaron las primeras etapas del desarrollo del mï¿½dulo de autenticaciï¿½n.'),
+(1001, 'Informe de pruebas de migraciï¿½n', '2023-11-05 10:30:00', 'Se realizaron pruebas de migraciï¿½n a la nube y se identificaron algunas ï¿½reas de mejora.'),
+(1002, 'Informe de lanzamiento de plataforma', '2023-11-10 13:20:00', 'La plataforma de comercio electrï¿½nico se lanzarï¿½ oficialmente la prï¿½xima semana.'),
+(1003, 'Informe de revisiï¿½n de base de datos', '2023-11-15 09:45:00', 'Se completï¿½ la revisiï¿½n de la base de datos y se implementaron las mejoras necesarias.'),
+(1004, 'Informe de pruebas de aplicaciï¿½n mï¿½vil', '2023-11-20 12:00:00', 'Se realizaron pruebas exhaustivas en la aplicaciï¿½n mï¿½vil de salud y se corrigieron errores identificados.'),
+(1005, 'Informe de lanzamiento de CMS', '2023-11-25 16:10:00', 'El sistema de gestiï¿½n de contenidos se lanzï¿½ con ï¿½xito y estï¿½ funcionando correctamente.'),
+(1006, 'Informe de retroalimentaciï¿½n de usuarios', '2023-12-01 11:30:00', 'Los usuarios proporcionaron retroalimentaciï¿½n positiva sobre la interfaz de usuario del nuevo mï¿½dulo de administraciï¿½n.'),
+(1007, 'Informe de capacitaciï¿½n de seguridad', '2023-12-05 14:00:00', 'La capacitaciï¿½n de seguridad se llevï¿½ a cabo segï¿½n lo programado y se cubrieron temas importantes.'),
+(1008, 'Informe de pruebas de seguridad', '2023-12-10 09:15:00', 'Se completaron las pruebas de seguridad en la aplicaciï¿½n de banca en lï¿½nea y se identificaron vulnerabilidades menores.'),
+(1009, 'Informe de lanzamiento de RRHH', '2023-12-15 12:45:00', 'El sistema de gestiï¿½n de recursos humanos se lanzï¿½ con ï¿½xito y se brindï¿½ capacitaciï¿½n al personal.'),
+(1010, 'Informe de mantenimiento de servidores', '2023-12-20 16:20:00', 'Se realizï¿½ el mantenimiento programado de los servidores y se mejorï¿½ el rendimiento.')
 
 
 select * from Informe
