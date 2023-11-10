@@ -1,412 +1,384 @@
+
 create database DeveloperSquad 
 use DeveloperSquad
 
-CREATE TABLE Usuario(
-	ID_Usuario int NOT NULL PRIMARY KEY IDENTITY(1, 1),
-	Nombre varchar(255) NOT NULL,
-	CorreoElectronico varchar(511) NOT NULL UNIQUE,
-	Rol varchar(255) NOT NULL,
-	EsActivo bit NOT NULL
-	
+CREATE TABLE Usuario (
+    idUsuario INT PRIMARY KEY,
+    nombre VARCHAR(255),
+    correoElectronico VARCHAR(255),
+    fechaNacimiento DATE,
+    rol VARCHAR(50),
+    activo BIT
 );
 
 CREATE TABLE Sala (
-    ID_Sala INT PRIMARY KEY IDENTITY(1, 1),
-    ID_Anfitrion INT NOT NULL,
-    Nombre VARCHAR(250) NOT NULL,
-    Capacidad INT NOT NULL,
-    Ubicacion VARCHAR(250) NOT NULL,
-    FOREIGN KEY (ID_Anfitrion) REFERENCES Usuario(ID_Usuario)
+    idSala INT PRIMARY KEY,
+    idUsuario INT,
+    nombre VARCHAR(255),
+    capacidad INT,
+    ubicacion VARCHAR(255),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 );
 
-CREATE TABLE Asistencia (
-    ID_Asistencia int NOT NULL PRIMARY KEY IDENTITY(1, 1),
-    ID_Usuario INT NOT NULL,
-    FechaRegistro datetime NOT NULL,
-    Estado varchar(250) NOT NULL,
-    FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
-);
-
-CREATE TABLE Grabacion (
-    ID_Grabacion int NOT NULL PRIMARY KEY IDENTITY(1, 1),
-    ID_Sala int NOT NULL,
-    NombreArchivo varchar(500) NOT NULL,
-    FechaGrabacion datetime NOT NULL,
-    Duracion TIME NOT NULL,
-    FOREIGN KEY (ID_Sala) REFERENCES Sala(ID_Sala)
-
-);
-
-CREATE TABLE Horario
- 
-	ID_Horario integer  PRIMARY KEY IDENTITY(1, 1),
-	ID_Usuario integer  NOT NULL ,
-	DiaSemana varchar(20) NOT NULL ,
-	HoraInicio TIME  NOT NULL ,
-	HoraFin TIME  NOT NULL,
-    FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
-
-;
-
-CREATE TABLE Informe (
-    ID_Informe int NOT NULL PRIMARY KEY IDENTITY(1, 1),
-	ID_Tarea int NOT NULL,
-    Titulo varchar(500) NOT NULL,
-    FechaCreacion datetime NOT NULL,
-    Contenido varchar(4090) NOT NULL,
-	FOREIGN KEY (ID_Tarea) REFERENCES Tarea(ID_Tarea)
-);
-
-CREATE TABLE Mensaje (
-    ID_Mensaje int NOT NULL PRIMARY KEY IDENTITY(1, 1),
-    ID_Usuario int NOT NULL,
-    Contenido varchar(500) NOT NULL,
-    FechaEnvio datetime NOT NULL
-    FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
+CREATE TABLE Reunion (
+    idReunion INT PRIMARY KEY,
+    idSala INT,
+    idUsuario INT,
+    fechaReunion DATETIME,
+    duracionReunion INT,
+    presencial BIT,
+    FOREIGN KEY (idSala) REFERENCES Sala(idSala),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 );
 
 CREATE TABLE Notificacion (
-    ID_Notificacion int NOT NULL PRIMARY KEY IDENTITY(1, 1),
-    Mensaje varchar(500) NOT NULL,
-    FechaEnvio datetime NOT NULL,
-    EsLeido bit NOT NULL
+    idNotificacion INT PRIMARY KEY,
+    mensaje VARCHAR(255),
+    fechaEnvio DATETIME,
+    leido BIT
+);
+
+CREATE TABLE UsuarioNotificacion (
+    idUsuario INT,
+    idNotificacion INT,
+    PRIMARY KEY (idUsuario, idNotificacion),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
+    FOREIGN KEY (idNotificacion) REFERENCES Notificacion(idNotificacion)
 );
 
 CREATE TABLE Proyecto (
-    ID_Proyecto int NOT NULL PRIMARY KEY IDENTITY(1, 1),
-    Nombre varchar(250) NOT NULL,
-    FechaIncio datetime NOT NULL,
-    FechaFin datetime NOT NULL,
-    Descripcion varchar(1000) NOT NULL
+    idProyecto INT PRIMARY KEY,
+    nombre VARCHAR(255),
+    fechaInicio DATETIME,
+    fechaFin DATETIME,
+    descripcion TEXT,
+    idUsuarioResponsable INT,
+    FOREIGN KEY (idUsuarioResponsable) REFERENCES Usuario(idUsuario)
+);
+
+CREATE TABLE UsuarioProyecto (
+    idUsuario INT,
+    idProyecto INT,
+    PRIMARY KEY (idUsuario, idProyecto),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto)
+);
+
+CREATE TABLE Asistencia (
+    idAsistencia INT PRIMARY KEY,
+    idUsuario INT,
+    fechaRegistro DATETIME,
+    estado VARCHAR(50),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
+);
+
+CREATE TABLE ReunionAsistencia (
+    idReunion INT,
+    idAsistencia INT,
+    PRIMARY KEY (idReunion, idAsistencia),
+    FOREIGN KEY (idReunion) REFERENCES Reunion(idReunion),
+    FOREIGN KEY (idAsistencia) REFERENCES Asistencia(idAsistencia)
+);
+
+CREATE TABLE Grabacion (
+    idGrabacion INT PRIMARY KEY,
+    nombreArchivo VARCHAR(255),
+    fechaGrabacion DATETIME,
+    duracion INT,
+    idSala INT,
+    idUsuario INT,
+    FOREIGN KEY (idSala) REFERENCES Sala(idSala),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
+);
+
+CREATE TABLE Informe (
+    idInforme INT PRIMARY KEY,
+    titulo VARCHAR(255),
+    fechaCreacion DATETIME,
+    contenido TEXT,
+    idUsuario INT,
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 );
 
 
 
 CREATE TABLE Tarea (
-    ID_Tarea int NOT NULL PRIMARY KEY IDENTITY(1, 1),
-    Nombre varchar(250) NOT NULL,
-    FechaEntrega datetime NOT NULL,
-    FechaIncio datetime NOT NULL,
-    Descripcion varchar(500) NOT NULL,
-    Estado varchar(250) NOT NULL
-);  
-
-CREATE TABLE [Reunion]
-( 
-	[ID_Reunion]         integer PRIMARY KEY ,
-	[ID_Sala]            integer  NOT NULL ,
-	[fechaReunion]       datetime  NULL ,
-	[duracionReunion]    varchar(20)  NULL,
-    FOREIGN KEY (ID_Sala) REFERENCES Sala(ID_Sala)
-)
-go
-
-CREATE TABLE [RepuestaAsistencia] (
-    [ID_RespuestaAsistencia] int NOT NULL PRIMARY KEY IDENTITY(1, 1),
-    [ID_FomularioAsistencia] int NOT NULL,
-    [ID_Usuario]         integer  NOT NULL ,
-	FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario)
-
+    idTarea INT PRIMARY KEY,
+    nombre VARCHAR(255),
+    fechaEntrega DATETIME,
+    fechaInicio DATETIME,
+    descripcion TEXT,
+    estado VARCHAR(50),
+    idInforme INT,
+    FOREIGN KEY (idInforme) REFERENCES Informe(idInforme)
 );
 
-CREATE TABLE Proyecto_Tarea (
-    ID_Proyecto int NOT NULL,
-    ID_Tarea int NOT NULL,
-	FOREIGN KEY (ID_Proyecto) REFERENCES Proyecto(ID_Proyecto),
-	FOREIGN KEY (ID_Tarea) REFERENCES Tarea(ID_Tarea)
+CREATE TABLE ProyectoTarea (
+    idProyecto INT,
+    idTarea INT,
+    PRIMARY KEY (idProyecto, idTarea),
+    FOREIGN KEY (idProyecto) REFERENCES Proyecto(idProyecto),
+    FOREIGN KEY (idTarea) REFERENCES Tarea(idTarea)
 );
 
-CREATE TABLE [Reunion_Asistencia]
-( 
-	[ID_Reunion]         integer  NOT NULL ,
-	[ID_Asistencia]      integer  NOT NULL,
-    FOREIGN KEY (ID_Reunion) REFERENCES Reunion(ID_Reunion),
-    FOREIGN KEY (ID_Asistencia) REFERENCES Asistencia(ID_Asistencia)
-)
-go
-
-CREATE TABLE Usuario_Notificacion (
-    ID_Usuario int NOT NULL,
-    ID_Notificacion int NOT NULL
-	FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario),
-	FOREIGN KEY (ID_Notificacion) REFERENCES Notificacion(ID_Notificacion)
+CREATE TABLE Mensaje (
+    idMensaje INT PRIMARY KEY,
+    contenido TEXT,
+    fechaEnvio DATETIME,
+    idUsuario INT,
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 );
 
-CREATE TABLE Usuario_Proyecto (
-    ID_Usuario int NOT NULL,
-    ID_Proyecto int NOT NULL
-	FOREIGN KEY (ID_Usuario) REFERENCES Usuario(ID_Usuario),
-	FOREIGN KEY (ID_Proyecto) REFERENCES Proyecto(ID_Proyecto)
+CREATE TABLE Horario (
+    idHorario INT PRIMARY KEY,
+    idUsuario INT,
+    horaInicio TIME,
+    horaFin TIME,
+    diaSemana VARCHAR(50),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario)
 );
 
-///////SCRIPT PARA INSERCION DE DATOS falta modificar/////
-INSERT INTO dbo.Usuario(Nombre, CorreoElectronico, Rol, EsActivo)
-VALUES('Mar�a L�pez', 'marialopez@example.com', 'Administrador', 1),
-('Javier Garc�a', 'javiergarcia@example.com', 'Usuario Regular', 1),
-('Ana Mart�nez', 'anamartinez@example.com', 'Usuario Regular', 0),
-('Carlos Rodr�guez', 'carlosrodriguez@example.com', 'Moderador', 1),
-('Sof�a P�rez', 'sofiaperez@example.com', 'Usuario Regular', 1),
-('Manuel Fern�ndez', 'manuelfernandez@example.com', 'Moderador', 0),
-('Laura Gonz�lez', 'lauragonzalez@example.com', 'Usuario Regular', 1),
-('Antonio Torres', 'antoniotorres@example.com', 'Administrador', 0),
-('Carmen Ram�rez', 'carmenramirez@example.com', 'Usuario Regular', 1),
-('Diego S�nchez', 'diegosanchez@example.com', 'Moderador', 1),
-('Isabel Ruiz', 'isabelruiz@example.com', 'Administrador', 0),
-('Juan Mendoza', 'juanmendoza@example.com', 'Moderador', 1),
-('Luc�a Morales', 'luciamorales@example.com', 'Usuario Regular', 0),
-('Jos� Castro', 'josecastro@example.com', 'Administrador', 1),
-('Marta Herrera', 'martaherrera@example.com', 'Moderador', 0);
+CREATE TABLE FormularioAsistencia (
+    idFormularioAsistencia INT PRIMARY KEY,
+    idReunion INT,
+    pregunta VARCHAR(255),
+    FOREIGN KEY (idReunion) REFERENCES Reunion(idReunion)
+);
+
+CREATE TABLE RespuestaFormularioAsistencia (
+    idRespuestaFormularioAsistencia INT PRIMARY KEY,
+    idUsuario INT,
+    idFormularioAsistencia INT,
+    respuesta VARCHAR(255),
+    FOREIGN KEY (idUsuario) REFERENCES Usuario(idUsuario),
+    FOREIGN KEY (idFormularioAsistencia) REFERENCES FormularioAsistencia(idFormularioAsistencia)
+);
+
+--------------------------------------------------
+INSERT INTO dbo.Usuario(idUsuario,nombre, correoElectronico, rol, activo)
+VALUES
+(1,'Maria Lopez', 'marialopez@example.com', 'Administrador', 1),
+(2,'Javier Garcia', 'javiergarcia@example.com', 'Usuario Regular', 1),
+(3,'Ana Martinez', 'anamartinez@example.com', 'Usuario Regular', 0),
+(4,'Carlos Rodriguez', 'carlosrodriguez@example.com', 'Moderador', 1),
+(5,'Sofia Perez', 'sofiaperez@example.com', 'Usuario Regular', 1),
+(6,'Manuel Fernandez', 'manuelfernandez@example.com', 'Moderador', 0),
+(7,'Laura Gonzalez', 'lauragonzalez@example.com', 'Usuario Regular', 1),
+(8,'Antonio Torres', 'antoniotorres@example.com', 'Administrador', 0),
+(9,'Carmen Ramirez', 'carmenramirez@example.com', 'Usuario Regular', 1),
+(10,'Diego Sanchez', 'diegosanchez@example.com', 'Moderador', 1)
 
 select * from Usuario
 
 
-INSERT INTO Tarea (Nombre, FechaEntrega, FechaIncio, Descripcion, Estado)
+INSERT INTO Informe (idInforme, titulo, fechaCreacion, contenido, idUsuario)
 VALUES
-('Desarrollo de la funci�n de registro', '2023-10-30 14:00:00', '2023-10-25 10:00:00', 'Implementaci�n de la funci�n de registro de usuarios en la aplicaci�n.', 'En progreso'),
-('Prueba de rendimiento del servidor', '2023-11-05 16:30:00', '2023-10-27 08:45:00', 'Realizaci�n de pruebas de carga para evaluar el rendimiento del servidor.', 'Pendiente'),
-('Revisi�n de documentaci�n t�cnica', '2023-11-10 13:15:00', '2023-10-29 11:20:00', 'Revisi�n de la documentaci�n t�cnica de la aplicaci�n para asegurarse de que est� actualizada.', 'Completada'),
-('Desarrollo de la interfaz de usuario', '2023-11-15 09:45:00', '2023-10-31 14:30:00', 'Dise�o e implementaci�n de la interfaz de usuario de la aplicaci�n.', 'En progreso'),
-('Pruebas de usabilidad', '2023-11-20 12:30:00', '2023-11-02 07:55:00', 'Realizaci�n de pruebas de usabilidad con usuarios beta.', 'Pendiente'),
-('Reuni�n de revisi�n del proyecto', '2023-11-25 15:20:00', '2023-11-04 10:15:00', 'Reuni�n de revisi�n del proyecto con el equipo de desarrollo.', 'Completada'),
-('Optimizaci�n de base de datos', '2023-11-30 10:00:00', '2023-11-10 14:30:00', 'Optimizaci�n y ajuste de rendimiento de la base de datos del sistema.', 'Pendiente'),
-('Desarrollo de m�dulo de notificaciones', '2023-12-05 11:45:00', '2023-11-15 09:30:00', 'Implementaci�n del m�dulo de notificaciones para alertar a los usuarios.', 'En progreso'),
-('Prueba de seguridad de la aplicaci�n', '2023-12-10 14:30:00', '2023-11-20 08:15:00', 'Realizaci�n de pruebas de seguridad para identificar vulnerabilidades.', 'Pendiente'),
-('Mejoras en la interfaz de usuario', '2023-12-15 09:15:00', '2023-11-25 13:45:00', 'Implementaci�n de mejoras visuales en la interfaz de usuario.', 'En progreso'),
-('Planificaci�n de la pr�xima fase del proyecto', '2023-12-20 15:00:00', '2023-11-30 12:30:00', 'Reuni�n para planificar la siguiente etapa del proyecto.', 'Completada'),
-('Revisi�n de informes de progreso', '2023-12-25 16:30:00', '2023-12-04 10:00:00', 'Revisi�n de informes de progreso del proyecto.', 'Pendiente'),
-('Pruebas finales y ajustes', '2023-12-30 17:15:00', '2023-12-10 09:45:00', 'Realizaci�n de pruebas finales y ajustes antes del lanzamiento.', 'Pendiente');
-
-
-select * from Tarea
-
-
-INSERT INTO Mensaje (Contenido, FechaEnvio)
-VALUES
-('Reuni�n de equipo a las 11 AM para discutir el progreso del proyecto.', '2023-10-30 10:30:00'),
-('Nueva actualizaci�n del software se lanzar� la pr�xima semana. Aseg�rate de que todas las pruebas est�n completas.', '2023-11-05 14:15:00'),
-('Se requiere una revisi�n del c�digo para la funcionalidad de inicio de sesi�n.', '2023-11-10 09:00:00'),
-('�Buen trabajo en la correcci�n de errores en el m�dulo de pagos!', '2023-11-15 16:00:00'),
-('La reuni�n de planificaci�n del proyecto se pospone para ma�ana a las 2 PM.', '2023-11-20 13:30:00'),
-('Por favor, aseg�rense de documentar cualquier cambio importante en el repositorio de c�digo.', '2023-11-25 12:45:00'),
-('El cliente ha solicitado una demostraci�n del producto para la pr�xima semana. Preparen una presentaci�n.', '2023-12-01 11:15:00'),
-('Nueva contrataci�n: Bienvenido Juan P�rez, nuestro nuevo desarrollador junior.', '2023-12-05 10:00:00'),
-('Recordatorio: Actualiza tus horas trabajadas en el sistema de seguimiento de proyectos.', '2023-12-10 15:30:00'),
-('El servidor de pruebas estar� en mantenimiento esta noche de 9 PM a 11 PM.', '2023-12-15 08:20:00'),
-('Reuni�n de sprint a las 3 PM para discutir los objetivos de la pr�xima iteraci�n.', '2023-12-20 14:45:00'),
-('Se requiere retroalimentaci�n sobre la interfaz de usuario del nuevo m�dulo de administraci�n.', '2023-12-25 10:10:00'),
-('Por favor, aseg�rense de que todos los informes de errores est�n actualizados antes del lanzamiento.', '2023-12-30 16:30:00'),
-('Necesitamos cubrir el turno de guardia para el soporte al cliente esta noche. �Qui�n puede hacerlo?', '2024-01-05 11:45:00'),
-('Recuerda la capacitaci�n de seguridad programada para ma�ana a las 9 AM.', '2024-01-10 12:55:00');
-
-select * from Mensaje
-
-INSERT INTO Notificacion (Mensaje, FechaEnvio, EsLeido)
-VALUES
-('Recuerda completar tu informe de progreso antes del fin de semana.', '2023-10-30 10:00:00', 1),
-('La reuni�n semanal de equipo es a las 3 PM. �No faltes!', '2023-11-05 14:30:00', 0),
-('Tus horas trabajadas para este proyecto deben registrarse hoy.', '2023-11-10 09:15:00', 1),
-('El cliente ha solicitado una demostraci�n del producto para la pr�xima semana.', '2023-11-15 16:15:00', 0),
-('�No olvides revisar los comentarios en el c�digo antes de la revisi�n de pares!', '2023-11-20 13:45:00', 1),
-('Revisi�n urgente del informe de errores para el m�dulo de facturaci�n.', '2023-11-25 12:55:00', 1),
-('Recuerda la capacitaci�n de seguridad programada para ma�ana a las 9 AM.', '2023-12-01 10:10:00', 0),
-('Recordatorio: Actualiza tus horas trabajadas en el sistema de seguimiento de proyectos.', '2023-12-05 11:00:00', 1),
-('Nueva actualizaci�n del software se lanzar� la pr�xima semana. Aseg�rate de que todas las pruebas est�n completas.', '2023-12-10 15:45:00', 0),
-('Reuni�n de sprint a las 3 PM para discutir los objetivos de la pr�xima iteraci�n.', '2023-12-15 08:30:00', 1),
-('Se requiere retroalimentaci�n sobre la interfaz de usuario del nuevo m�dulo de administraci�n.', '2023-12-20 14:50:00', 1),
-('El servidor de pruebas estar� en mantenimiento esta noche de 9 PM a 11 PM.', '2023-12-25 10:30:00', 0),
-('Necesitamos cubrir el turno de guardia para el soporte al cliente esta noche. �Qui�n puede hacerlo?', '2023-12-30 16:00:00', 1),
-('Por favor, aseg�rense de documentar cualquier cambio importante en el repositorio de c�digo.', '2024-01-05 11:35:00', 1),
-('Nueva contrataci�n: Bienvenido Juan P�rez, nuestro nuevo desarrollador junior.', '2024-01-10 13:10:00', 0);
-select * from Notificacion
-
-INSERT INTO Proyecto (Nombre, FechaIncio, FechaFin, Descripcion)
-VALUES
-('Desarrollo de una aplicaci�n de gesti�n de proyectos', '2023-10-30 00:00:00', '2023-11-30 23:59:59', 'Desarrollo de una aplicaci�n completa para gestionar proyectos y tareas.'),
-('Migraci�n a la nube de un sistema de gesti�n empresarial', '2023-11-01 00:00:00', '2023-12-01 23:59:59', 'Migraci�n de un sistema empresarial a la nube para mejorar la escalabilidad.'),
-('Desarrollo de una plataforma de comercio electr�nico', '2023-11-15 00:00:00', '2023-12-15 23:59:59', 'Creaci�n de una plataforma de comercio electr�nico para una tienda en l�nea.'),
-('Optimizaci�n de una base de datos de gran escala', '2023-11-30 00:00:00', '2023-12-30 23:59:59', 'Mejora del rendimiento y escalabilidad de una base de datos empresarial.'),
-('Desarrollo de una aplicaci�n m�vil de salud', '2023-12-01 00:00:00', '2024-01-01 23:59:59', 'Creaci�n de una aplicaci�n m�vil para el seguimiento de la salud y el estado f�sico.'),
-('Implementaci�n de un sistema de gesti�n de contenidos', '2023-12-15 00:00:00', '2024-01-15 23:59:59', 'Desarrollo e implementaci�n de un CMS para un sitio web.'),
-('Desarrollo de un motor de recomendaci�n de contenido', '2024-01-01 00:00:00', '2024-02-01 23:59:59', 'Creaci�n de un motor de recomendaci�n de contenido personalizado.'),
-('Creaci�n de una aplicaci�n de an�lisis de datos', '2024-01-15 00:00:00', '2024-02-15 23:59:59', 'Desarrollo de una aplicaci�n para analizar grandes conjuntos de datos.'),
-('Mejora de la seguridad de una aplicaci�n de banca en l�nea', '2024-02-01 00:00:00', '2024-03-01 23:59:59', 'Revisi�n y mejora de la seguridad de una aplicaci�n financiera en l�nea.'),
-('Desarrollo de un sistema de gesti�n de recursos humanos', '2024-02-15 00:00:00', '2024-03-15 23:59:59', 'Creaci�n de un sistema de gesti�n de RRHH para una empresa.'),
-('Optimizaci�n de la infraestructura de servidor', '2024-03-01 00:00:00', '2024-04-01 23:59:59', 'Mejora del rendimiento y la eficiencia de los servidores de la empresa.'),
-('Desarrollo de un portal de e-learning', '2024-03-15 00:00:00', '2024-04-15 23:59:59', 'Creaci�n de un portal de educaci�n en l�nea para cursos y capacitaci�n.'),
-('Migraci�n a una plataforma de gesti�n de proyectos', '2024-04-01 00:00:00', '2024-05-01 23:59:59', 'Migraci�n a una nueva plataforma para la gesti�n de proyectos y colaboraci�n.'),
-('Desarrollo de un sistema de informaci�n geogr�fica', '2024-04-15 00:00:00', '2024-05-15 23:59:59', 'Creaci�n de un sistema para la visualizaci�n y an�lisis de datos geoespaciales.'),
-('Implementaci�n de un sistema de chat en tiempo real', '2024-05-01 00:00:00', '2024-06-01 23:59:59', 'Integraci�n de un sistema de chat en tiempo real en una aplicaci�n existente.');
-
-select * from Proyecto
-
-INSERT INTO Sala (Nombre, Capacidad, Ubicacion)
-VALUES
-('Sala de Reuniones 1', 10, 'Planta 5, Edificio A'),
-('Sala de Conferencias 1', 50, 'Planta 2, Edificio B'),
-('Sala de Entrenamiento 1', 30, 'Planta 1, Edificio C'),
-('Sala de Juntas 1', 12, 'Planta 4, Edificio A'),
-('Sala de Videoconferencias 1', 20, 'Planta 3, Edificio D'),
-('Sala de Entrevistas 1', 5, 'Planta 2, Edificio C'),
-('Sala de Desarrollo 1', 15, 'Planta 6, Edificio B'),
-('Sala de Descanso 1', 8, 'Planta 1, Edificio D'),
-('Sala de Reuniones 2', 12, 'Planta 3, Edificio A'),
-('Sala de Conferencias 2', 60, 'Planta 2, Edificio D'),
-('Sala de Entrenamiento 2', 35, 'Planta 4, Edificio C'),
-('Sala de Juntas 2', 8, 'Planta 5, Edificio B'),
-('Sala de Videoconferencias 2', 25, 'Planta 6, Edificio A'),
-('Sala de Entrevistas 2', 6, 'Planta 2, Edificio A'),
-('Sala de Desarrollo 2', 20, 'Planta 4, Edificio B');
-
-select * from Sala
-
-INSERT INTO Asistencia (FechaRegistro, Estado)
-VALUES
-('2023-10-30 09:00:00', 'Presente'),
-('2023-10-31 09:15:00', 'Tarde'),
-('2023-11-01 09:10:00', 'Presente'),
-('2023-11-02 09:05:00', 'Licencia'),
-('2023-11-03 09:20:00', 'Presente'),
-('2023-11-04 09:30:00', 'Presente'),
-('2023-11-05 09:25:00', 'Tarde'),
-('2023-11-06 09:45:00', 'Licencia'),
-('2023-11-07 09:40:00', 'Tarde'),
-('2023-11-08 09:35:00', 'Presente'),
-('2023-11-09 09:50:00', 'Ausente'),
-('2023-11-10 09:55:00', 'Presente'),
-('2023-11-11 09:00:00', 'Licencia'),
-('2023-11-12 09:15:00', 'Tarde'),
-('2023-11-13 09:10:00', 'Licencia');
-
-select * from Asistencia
-
-
-INSERT INTO Grabacion (NombreArchivo, FechaGrabacion, Duracion)
-VALUES
-('grabacion_001.mp4', '2023-10-30 14:15:00', '00:15:30'),
-('grabacion_002.mp4', '2023-11-05 10:30:00', '00:12:45'),
-('grabacion_003.mp4', '2023-11-10 13:20:00', '00:18:00'),
-('grabacion_004.mp4', '2023-11-15 09:45:00', '00:14:15'),
-('grabacion_005.mp4', '2023-11-20 12:00:00', '00:16:30'),
-('grabacion_006.mp4', '2023-11-25 16:10:00', '00:19:45'),
-('grabacion_007.mp4', '2023-12-01 11:30:00', '00:22:30'),
-('grabacion_008.mp4', '2023-12-05 14:00:00', '00:20:15'),
-('grabacion_009.mp4', '2023-12-10 09:15:00', '00:17:45'),
-('grabacion_010.mp4', '2023-12-15 12:45:00', '00:14:30'),
-('grabacion_011.mp4', '2023-12-20 16:20:00', '00:13:45'),
-('grabacion_012.mp4', '2023-12-25 10:30:00', '00:16:00'),
-('grabacion_013.mp4', '2023-12-30 15:00:00', '00:20:30'),
-('grabacion_014.mp4', '2024-01-05 13:45:00', '00:15:15'),
-('grabacion_015.mp4', '2024-01-10 10:10:00', '00:18:45');
-
-select * from Grabacion
-
-INSERT INTO Informe (ID_Tarea, Titulo, FechaCreacion, Contenido)
-VALUES
-(1000, 'Informe de avance de desarrollo', '2023-10-30 14:15:00', 'Hoy se completaron las primeras etapas del desarrollo del m�dulo de autenticaci�n.'),
-(1001, 'Informe de pruebas de migraci�n', '2023-11-05 10:30:00', 'Se realizaron pruebas de migraci�n a la nube y se identificaron algunas �reas de mejora.'),
-(1002, 'Informe de lanzamiento de plataforma', '2023-11-10 13:20:00', 'La plataforma de comercio electr�nico se lanzar� oficialmente la pr�xima semana.'),
-(1003, 'Informe de revisi�n de base de datos', '2023-11-15 09:45:00', 'Se complet� la revisi�n de la base de datos y se implementaron las mejoras necesarias.'),
-(1004, 'Informe de pruebas de aplicaci�n m�vil', '2023-11-20 12:00:00', 'Se realizaron pruebas exhaustivas en la aplicaci�n m�vil de salud y se corrigieron errores identificados.'),
-(1005, 'Informe de lanzamiento de CMS', '2023-11-25 16:10:00', 'El sistema de gesti�n de contenidos se lanz� con �xito y est� funcionando correctamente.'),
-(1006, 'Informe de retroalimentaci�n de usuarios', '2023-12-01 11:30:00', 'Los usuarios proporcionaron retroalimentaci�n positiva sobre la interfaz de usuario del nuevo m�dulo de administraci�n.'),
-(1007, 'Informe de capacitaci�n de seguridad', '2023-12-05 14:00:00', 'La capacitaci�n de seguridad se llev� a cabo seg�n lo programado y se cubrieron temas importantes.'),
-(1008, 'Informe de pruebas de seguridad', '2023-12-10 09:15:00', 'Se completaron las pruebas de seguridad en la aplicaci�n de banca en l�nea y se identificaron vulnerabilidades menores.'),
-(1009, 'Informe de lanzamiento de RRHH', '2023-12-15 12:45:00', 'El sistema de gesti�n de recursos humanos se lanz� con �xito y se brind� capacitaci�n al personal.'),
-(1010, 'Informe de mantenimiento de servidores', '2023-12-20 16:20:00', 'Se realiz� el mantenimiento programado de los servidores y se mejor� el rendimiento.')
-
+(1, 'Informe Mensual de Proyectos', '2023-11-01 09:30:00', 'Resumen mensual de avances y desaf�os en los proyectos actuales.', 1),
+(2, 'Informe de Calidad de Software', '2023-11-05 14:15:00', 'Evaluaci�n de la calidad del software con recomendaciones para mejoras.', 2),
+(3, 'Informe de Marketing Digital', '2023-11-10 11:45:00', 'Resultados de la campa�a de marketing digital del �ltimo trimestre.', 3),
+(4, 'Informe de Ventas Mensual', '2023-11-15 13:20:00', 'An�lisis de las ventas mensuales con proyecciones para el pr�ximo a�o.', 4),
+(5, 'Informe de Seguridad de la Red', '2023-11-20 10:00:00', 'Evaluaci�n de la seguridad de la red y medidas recomendadas para fortalecerla.', 5),
+(6, 'Informe de Desempe�o del Equipo', '2023-11-25 15:30:00', 'Revisi�n del desempe�o individual y colectivo del equipo de trabajo.', 6),
+(7, 'Informe de Capacitaci�n Interna', '2023-12-01 12:00:00', 'Efectividad de la capacitaci�n interna y �reas de mejora identificadas.', 7),
+(8, 'Informe de Incidentes de Seguridad', '2023-12-05 14:45:00', 'Registro de incidentes de seguridad y acciones tomadas para abordarlos.', 8),
+(9, 'Informe de Satisfacci�n del Cliente', '2023-12-10 09:15:00', 'Resultados de encuestas de satisfacci�n del cliente y planes de mejora.', 9),
+(10, 'Informe de Presupuesto Anual', '2023-12-15 16:00:00', 'Desglose del presupuesto anual y seguimiento del gasto real.', 10);
 
 select * from Informe
 
-
-INSERT INTO Mensaje_Destinatario (ID_Mensaje, ID_Usuario)
+INSERT INTO Tarea (idTarea,idInforme,nombre, fechaEntrega, fechaInicio, descripcion, estado)
 VALUES
-(1000, 10000), 
-(1001, 10001), 
-(1001, 10002), 
-(1002, 10003), 
-(1002, 10004), 
-(1003, 10005), 
-(1004, 10006), 
-(1005, 10007), 
-(1006, 10008), 
-(1007, 10009), 
-(1008, 10010), 
-(1008, 10011), 
-(1009, 10012), 
-(1010, 10013), 
-(1011, 10014); 
+(1,1,'Desarrollo de la funci�n de registro', '2023-10-30 14:00:00', '2023-10-25 10:00:00', 'Implementaci�n de la funci�n de registro de usuarios en la aplicaci�n.', 'En progreso'),
+(2,2,'Prueba de rendimiento del servidor', '2023-11-05 16:30:00', '2023-10-27 08:45:00', 'Realizaci�n de pruebas de carga para evaluar el rendimiento del servidor.', 'Pendiente'),
+(3,3,'Revisi�n de documentaci�n t�cnica', '2023-11-10 13:15:00', '2023-10-29 11:20:00', 'Revisi�n de la documentaci�n t�cnica de la aplicaci�n para asegurarse de que est� actualizada.', 'Completada'),
+(4,4,'Desarrollo de la interfaz de usuario', '2023-11-15 09:45:00', '2023-10-31 14:30:00', 'Dise�o e implementaci�n de la interfaz de usuario de la aplicaci�n.', 'En progreso'),
+(5,5,'Pruebas de usabilidad', '2023-11-20 12:30:00', '2023-11-02 07:55:00', 'Realizaci�n de pruebas de usabilidad con usuarios beta.', 'Pendiente'),
+(6,6,'Reuni�n de revisi�n del proyecto', '2023-11-25 15:20:00', '2023-11-04 10:15:00', 'Reuni�n de revisi�n del proyecto con el equipo de desarrollo.', 'Completada'),
+(7,7,'Optimizaci�n de base de datos', '2023-11-30 10:00:00', '2023-11-10 14:30:00', 'Optimizaci�n y ajuste de rendimiento de la base de datos del sistema.', 'Pendiente'),
+(8,8,'Desarrollo de m�dulo de notificaciones', '2023-12-05 11:45:00', '2023-11-15 09:30:00', 'Implementaci�n del m�dulo de notificaciones para alertar a los usuarios.', 'En progreso'),
+(9,9,'Prueba de seguridad de la aplicaci�n', '2023-12-10 14:30:00', '2023-11-20 08:15:00', 'Realizaci�n de pruebas de seguridad para identificar vulnerabilidades.', 'Pendiente'),
+(10,10,'Mejoras en la interfaz de usuario', '2023-12-15 09:15:00', '2023-11-25 13:45:00', 'Implementaci�n de mejoras visuales en la interfaz de usuario.', 'En progreso')
 
-select * from Mensaje_Destinatario
+select * from Tarea
 
-INSERT INTO Mensaje_Remitente (ID_Usuario, ID_Mensaje)
+INSERT INTO Sala (idSala, idUsuario, nombre, capacidad, ubicacion)
 VALUES
-(10000, 1000), 
-(10001, 1001), 
-(10003, 1002), 
-(10006, 1004), 
-(10009, 1006), 
-(10012, 1008), 
-(10015, 1010), 
-(10002, 1003), 
-(10004, 1005), 
-(10007, 1007), 
-(10010, 1009), 
-(10013, 1011), 
-(10005, 1004), 
-(10008, 1006), 
-(10011, 1008); 
+(1, 1, 'Sala1', 20, 'Piso 5, Ala A'),
+(2, 2, 'Sala2', 15, 'Piso 3, Ala B'),
+(3, 3, 'Sala3', 30, 'Piso 2, Ala C'),
+(4, 4, 'Sala4', 25, 'Piso 4, Ala A'),
+(5, 5, 'Sala5', 18, 'Piso 1, Ala B'),
+(6, 6, 'Sala6', 22, 'Piso 6, Ala C'),
+(7, 7, 'Sala7', 28, 'Piso 3, Ala A'),
+(8, 8, 'Sala8', 35, 'Piso 2, Ala B'),
+(9, 9, 'Sala9', 16, 'Piso 4, Ala C'),
+(10, 10, 'Sala10', 40, 'Piso 1, Ala A');
 
-select * from Mensaje_Remitente
-
-INSERT INTO Proyecto_Tarea (ID_Proyecto, ID_Tarea)
+INSERT INTO Reunion (idReunion, idSala, idUsuario, fechaReunion, duracionReunion, presencial)
 VALUES
-(1000, 1000), (1000, 1001), (1000, 1002), (1000, 1003), (1000, 1004),
-(1001, 1005), (1001, 1006), (1001, 1007), (1001, 1008), (1001, 1009);
+(1, 1, 1, '2023-11-01 09:00:00', 60, 1),
+(2, 2, 2, '2023-11-02 14:30:00', 45, 0),
+(3, 3, 3, '2023-11-03 11:15:00', 90, 1),
+(4, 4, 4, '2023-11-04 10:00:00', 75, 0),
+(5, 5, 5, '2023-11-05 13:45:00', 120, 1),
+(6, 6, 6, '2023-11-06 16:30:00', 30, 0),
+(7, 7, 7, '2023-11-07 12:20:00', 45, 1),
+(8, 8, 8, '2023-11-08 09:45:00', 60, 0),
+(9, 9, 9, '2023-11-09 15:15:00', 90, 1),
+(10, 10, 10, '2023-11-10 14:00:00', 75, 0);
 
-select * from Proyecto_Tarea
-
-INSERT INTO Sala_Asistencia (ID_Sala, ID_Asistencia)--
+INSERT INTO Notificacion (idNotificacion, mensaje, fechaEnvio, leido)
 VALUES
-(100, 1006), (100, 1007), (100, 1008), (100, 1009), (100, 1010),
-(101, 1011), (101, 1012), (101, 1013), (101, 1014), (101, 1015);
+(1, 'Notificaci�n 1', '2023-11-01 08:00:00', 0),
+(2, 'Notificaci�n 2', '2023-11-02 10:30:00', 1),
+(3, 'Notificaci�n 3', '2023-11-03 14:15:00', 0),
+(4, 'Notificaci�n 4', '2023-11-04 11:45:00', 1),
+(5, 'Notificaci�n 5', '2023-11-05 09:30:00', 0),
+(6, 'Notificaci�n 6', '2023-11-06 16:00:00', 1),
+(7, 'Notificaci�n 7', '2023-11-07 12:45:00', 0),
+(8, 'Notificaci�n 8', '2023-11-08 14:30:00', 1),
+(9, 'Notificaci�n 9', '2023-11-09 10:15:00', 0),
+(10, 'Notificaci�n 10', '2023-11-10 13:00:00', 1);
 
-select * from Sala_Asistencia
-
-select * from Usuario
-select * from Asistencia
-
-INSERT INTO Usuario_Asistencia (ID_Usuario, ID_Asistencia)
+INSERT INTO UsuarioNotificacion (idUsuario, idNotificacion)
 VALUES
-(10000, 1010), (10001, 1011), (10002, 1012), (10003, 1013), (10004, 1014),
-(10005, 1012), (10001, 1011), (10007, 1002), (10008, 1004), (10009, 1007);
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5),
+(6, 6),
+(7, 7),
+(8, 8),
+(9, 9),
+(10, 10);
 
-select * from Usuario_Asistencia
-
-
-
-INSERT INTO Usuario_Notificacion (ID_Usuario, ID_Notificacion)
+INSERT INTO Proyecto (idProyecto, nombre, fechaInicio, fechaFin, descripcion, idUsuarioResponsable)
 VALUES
-(10000, 100010), (10000, 100011), (10000, 100012), (10000, 100013), (10000, 100014),
-(10001, 100005), (10001, 100006), (10001, 100011), (10001, 100010), (10001, 100009);
+(1, 'Proyecto A', '2023-01-01 08:00:00', '2023-12-31 17:00:00', 'Descripci�n del Proyecto A.', 1),
+(2, 'Proyecto B', '2023-02-01 09:30:00', '2023-11-30 16:45:00', 'Descripci�n del Proyecto B.', 2),
+(3, 'Proyecto C', '2023-03-01 10:45:00', '2023-10-31 15:30:00', 'Descripci�n del Proyecto C.', 3),
+(4, 'Proyecto D', '2023-04-01 11:15:00', '2023-09-30 14:20:00', 'Descripci�n del Proyecto D.', 4),
+(5, 'Proyecto E', '2023-05-01 12:30:00', '2023-08-31 13:00:00', 'Descripci�n del Proyecto E.', 5),
+(6, 'Proyecto F', '2023-06-01 13:45:00', '2023-07-31 12:45:00', 'Descripci�n del Proyecto F.', 6),
+(7, 'Proyecto G', '2023-07-01 14:00:00', '2023-06-30 11:30:00', 'Descripci�n del Proyecto G.', 7),
+(8, 'Proyecto H', '2023-08-01 15:15:00', '2023-05-31 10:15:00', 'Descripci�n del Proyecto H.', 8),
+(9, 'Proyecto I', '2023-09-01 16:30:00', '2023-04-30 09:30:00', 'Descripci�n del Proyecto I.', 9),
+(10, 'Proyecto J', '2023-10-01 17:45:00', '2023-03-31 08:45:00', 'Descripci�n del Proyecto J.', 10);
 
-select * from Usuario_Notificacion--
-
-
-INSERT INTO Usuario_Proyecto (ID_Usuario, ID_Proyecto)
+INSERT INTO UsuarioProyecto (idUsuario, idProyecto)
 VALUES
-(10000, 1010), (10000, 1011), (10000, 1012), (10000, 1013), (10000, 1014),
-(10001, 1005), (10001, 1006), (10001, 1007), (10001, 1008), (10001, 1009);
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5),
+(6, 6),
+(7, 7),
+(8, 8),
+(9, 9),
+(10, 10);
 
-select * from Usuario_Proyecto
-
-INSERT INTO Usuario_Tarea (ID_Usuario, ID_Tarea)
+INSERT INTO Asistencia (idAsistencia, idUsuario, fechaRegistro, estado)
 VALUES
-(10000, 1000), (10000, 1001), (10000, 1002), (10000, 1003), (10000, 1004),
-(10001, 1005), (10001, 1006), (10001, 1007), (10001, 1008), (10001, 1009);
+(1, 1, '2023-01-01 08:00:00', 'Presente'),
+(2, 2, '2023-02-01 09:30:00', 'Ausente'),
+(3, 3, '2023-03-01 10:45:00', 'Tard�o'),
+(4, 4, '2023-04-01 11:15:00', 'Presente'),
+(5, 5, '2023-05-01 12:30:00', 'Ausente'),
+(6, 6, '2023-06-01 13:45:00', 'Tard�o'),
+(7, 7, '2023-07-01 14:00:00', 'Presente'),
+(8, 8, '2023-08-01 15:15:00', 'Ausente'),
+(9, 9, '2023-09-01 16:30:00', 'Tard�o'),
+(10, 10, '2023-10-01 17:45:00', 'Presente');
 
-INSERT INTO Sala_Grabacion (ID_Sala, ID_Grabacion)
+INSERT INTO ReunionAsistencia (idReunion, idAsistencia)
 VALUES
-(100, 110), (100, 101), (100, 102), (100, 103), (100, 104),
-(101, 105), (101, 106), (101, 107), (101, 108), (101, 109);
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5),
+(6, 6),
+(7, 7),
+(8, 8),
+(9, 9),
+(10, 10);
 
+INSERT INTO Grabacion (idGrabacion, nombreArchivo, fechaGrabacion, duracion, idSala, idUsuario)
+VALUES
+(1, 'Grabacion_A.mp4', '2023-01-01 08:00:00', 60, 1, 1),
+(2, 'Grabacion_B.mp4', '2023-02-01 09:30:00', 45, 2, 2),
+(3, 'Grabacion_C.mp4', '2023-03-01 10:45:00', 30, 3, 3),
+(4, 'Grabacion_D.mp4', '2023-04-01 11:15:00', 75, 4, 4),
+(5, 'Grabacion_E.mp4', '2023-05-01 12:30:00', 50, 5, 5),
+(6, 'Grabacion_F.mp4', '2023-06-01 13:45:00', 40, 6, 6),
+(7, 'Grabacion_G.mp4', '2023-07-01 14:00:00', 55, 7, 7),
+(8, 'Grabacion_H.mp4', '2023-08-01 15:15:00', 65, 8, 8),
+(9, 'Grabacion_I.mp4', '2023-09-01 16:30:00', 70, 9, 9),
+(10, 'Grabacion_J.mp4', '2023-10-01 17:45:00', 80, 10, 10);
 
+INSERT INTO ProyectoTarea (idProyecto, idTarea)
+VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5),
+(6, 6),
+(7, 7),
+(8, 8),
+(9, 9),
+(10, 10);
+
+INSERT INTO Mensaje (idMensaje, contenido, fechaEnvio, idUsuario)
+VALUES
+(1, 'Hola, �c�mo est�s?', '2023-11-01 09:30:00', 1),
+(2, 'Recuerda la reuni�n de ma�ana.', '2023-11-05 14:15:00', 2),
+(3, '�Buen trabajo en el proyecto!', '2023-11-10 11:45:00', 3),
+(4, 'Tenemos una nueva actualizaci�n disponible.', '2023-11-15 13:20:00', 4),
+(5, '�Puedes revisar este informe?', '2023-11-20 10:00:00', 5),
+(6, 'Confirmado para la reuni�n de la pr�xima semana.', '2023-11-25 15:30:00', 6),
+(7, 'Se ha enviado la documentaci�n necesaria.', '2023-12-01 12:00:00', 7),
+(8, 'Importante: Cambio en la fecha de entrega.', '2023-12-05 14:45:00', 8),
+(9, '�Felices fiestas a todos!', '2023-12-10 09:15:00', 9),
+(10, 'Revisemos estos problemas en la llamada.', '2023-12-15 16:00:00', 10);
+
+INSERT INTO Horario (idHorario, idUsuario, horaInicio, horaFin, diaSemana)
+VALUES
+(1, 1, '08:00:00', '17:00:00', 'Lunes'),
+(2, 2, '09:00:00', '18:00:00', 'Martes'),
+(3, 3, '10:00:00', '19:00:00', 'Mi�rcoles'),
+(4, 4, '08:30:00', '17:30:00', 'Jueves'),
+(5, 5, '11:00:00', '20:00:00', 'Viernes'),
+(6, 6, '08:00:00', '17:00:00', 'Lunes'),
+(7, 7, '09:30:00', '18:30:00', 'Martes'),
+(8, 8, '10:30:00', '19:30:00', 'Mi�rcoles'),
+(9, 9, '08:45:00', '17:45:00', 'Jueves'),
+(10, 10, '11:30:00', '20:30:00', 'Viernes');
+
+INSERT INTO FormularioAsistencia (idFormularioAsistencia, idReunion, pregunta)
+VALUES
+(1, 1, '�Confirmar�s tu asistencia a la reuni�n?'),
+(2, 2, '�Tienes alg�n tema espec�fico que te gustar�a tratar en la reuni�n?'),
+(3, 3, '�Necesitar�s alg�n material adicional para la reuni�n?'),
+(4, 4, '�Tienes alguna restricci�n alimentaria para el catering de la reuni�n?'),
+(5, 5, '�Puedes proporcionar una breve actualizaci�n sobre tu �rea de trabajo?'),
+(6, 6, '�Hay alg�n impedimento para tu participaci�n en la reuni�n de la pr�xima semana?'),
+(7, 7, '�Confirmas tu disponibilidad para la capacitaci�n interna?'),
+(8, 8, '�Has identificado alg�n riesgo de seguridad que debamos abordar?'),
+(9, 9, '�C�mo calificar�as tu nivel de satisfacci�n con los �ltimos cambios en el proyecto?'),
+(10, 10, '�Necesitas alg�n soporte t�cnico antes de la llamada programada?');
+
+INSERT INTO RespuestaFormularioAsistencia (idRespuestaFormularioAsistencia, idUsuario, idFormularioAsistencia, respuesta)
+VALUES
+(1, 1, 1, 'S�, confirmar� mi asistencia.'),
+(2, 2, 2, 'No, no tengo temas espec�ficos para tratar.'),
+(3, 3, 3, 'No necesitar� material adicional.'),
+(4, 4, 4, 'No tengo restricciones alimentarias.'),
+(5, 5, 5, 'Proporcionar� una actualizaci�n detallada.'),
+(6, 6, 6, 'Confirmo mi disponibilidad para la pr�xima reuni�n.'),
+(7, 7, 7, 'S�, confirmo mi participaci�n en la capacitaci�n.'),
+(8, 8, 8, 'No he identificado riesgos de seguridad.'),
+(9, 9, 9, 'Estoy satisfecho con los cambios en el proyecto.'),
+(10, 10, 10, 'No necesito soporte t�cnico previo a la llamada.');
